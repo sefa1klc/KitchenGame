@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Objects.UseItems.ItemBox;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Player
     {
         private Animator anim;
         private Inventory _inventory;
+        public GameObject _particle;
 
         private void Awake()
         {
@@ -44,6 +46,7 @@ namespace Player
 
         public void DoTakeAction()
         {
+            StartCoroutine(Particle());
             //create a ray from position to forward
             Ray ray = new Ray(transform.position + Vector3.up /2, transform.forward);
             if (Physics.Raycast(ray, out RaycastHit hit, 1))
@@ -55,6 +58,13 @@ namespace Player
                     _inventory.TakeItem(itemBox.GetItem());
                 }
             }
+        }
+
+        private IEnumerator Particle()
+        {
+            _particle.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            _particle.SetActive(false);
         }
     }
 }

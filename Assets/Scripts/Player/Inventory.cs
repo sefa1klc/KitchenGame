@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Interface;
 using Objects;
@@ -44,7 +45,7 @@ namespace Player
             }
             
         }
-
+        
         public ItemType GetItem()
         {
             return _currentItem;
