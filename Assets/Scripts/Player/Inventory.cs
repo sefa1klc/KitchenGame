@@ -45,7 +45,18 @@ namespace Player
             }
             
         }
-        
+
+        public ItemType PutItem()
+        {
+            if (_currentItem == ItemType.NONE) return ItemType.NONE;
+            _itemsToHold.ForEach(obj => obj._item.SetActive(false));
+            return _currentItem;
+        }
+
+        public void ClearHand()
+        {
+            _currentItem = ItemType.NONE;
+        }
         public ItemType GetItem()
         {
             return _currentItem;

@@ -4,7 +4,7 @@ namespace Interface
 {
     public interface IPutItemFull
     {
-        public void PutItem(Item item);
+        public bool PutItem(ItemType item);
 
     }
 }

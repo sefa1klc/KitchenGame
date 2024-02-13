@@ -1,4 +1,5 @@
-﻿using Interface;
+﻿using System;
+using Interface;
 using UnityEngine;
 
 namespace Objects.UseItems.ItemBox
@@ -11,5 +12,6 @@ namespace Objects.UseItems.ItemBox
         {
             return _item;
         }
+
     }
 }

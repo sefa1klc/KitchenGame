@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Interface;
 using Objects.UseItems.ItemBox;
 using UnityEngine;
 
@@ -56,6 +57,15 @@ namespace Player
                 {
                     //Get the item held by the ItemBox
                     _inventory.TakeItem(itemBox.GetItem());
+                }
+                else if (hit.collider.TryGetComponent<IPutItemFull>(out IPutItemFull itemPutBox))
+                {
+                    bool status = itemPutBox.PutItem(_inventory.GetItem());
+                    if (status == true)
+                    {
+                        _inventory.PutItem();
+                        _inventory.ClearHand();
+                    }
                 }
             }
         }
