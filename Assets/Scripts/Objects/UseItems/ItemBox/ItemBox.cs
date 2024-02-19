@@ -8,9 +8,14 @@ namespace Objects.UseItems.ItemBox
     {
         [SerializeField] private ItemType _item;
         
-        public ItemType GetItem()
+        public virtual ItemType GetItem()
         {
             return _item;
+        }
+
+        public void SetType(ItemType type)
+        {
+            _item = type;
         }
 
     }

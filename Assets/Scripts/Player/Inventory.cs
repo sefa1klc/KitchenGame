@@ -25,7 +25,7 @@ namespace Player
         {
             _currentItem = ItemType.NONE;
         }
-
+        
         public void TakeItem(ItemType _itemType)
         {
             if (_currentItem != ItemType.NONE) return;
