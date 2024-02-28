@@ -69,6 +69,7 @@ namespace Stuff
 
         public bool PutItem(ItemType item)
         {
+            if (!FilterItem(item)) return false;
             if (_currentItem != ItemType.NONE) return false;
             _currentItem = item;
             
@@ -86,6 +87,22 @@ namespace Stuff
             }
 
             return true;
+        }
+
+        private bool FilterItem(ItemType _itemType)
+        {
+            switch (_itemType)
+            {
+                case ItemType._tomato:
+                case ItemType._lettuce:
+                case ItemType._onion:
+                case ItemType._cheese:
+                case ItemType._bread:
+                    return true;
+                case ItemType._carrot:
+                default:
+                    return false;
+            }
         }
     }
 }
