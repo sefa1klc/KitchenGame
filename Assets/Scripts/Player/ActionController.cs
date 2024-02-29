@@ -14,12 +14,17 @@ namespace Player
         private Inventory _inventory;
         public GameObject _particle;
         private bool _isWorking = false;
+        private bool _isProccessing = false;
         private Functionality _currentFunction;
+        private bool _canTake = true;
+        private WaitForSeconds _takeCoolDown;
 
         private void Awake()
         {
+            _canTake = true;
             anim = GetComponent<Animator>();
             _inventory = GetComponent<Inventory>();
+            _takeCoolDown = new WaitForSeconds(0.5f);
         }
 
         private void Update()
@@ -30,8 +35,9 @@ namespace Player
             }
             else if (Input.GetMouseButton(0))
             {
-                if (_isWorking == false)
-                {
+                _isWorking = true;
+                if (_isProccessing == false)
+                { 
                     StartProcessAction();
                 }
                 else
@@ -40,9 +46,11 @@ namespace Player
                 }   
             }else if (Input.GetMouseButtonUp(0))
             {
-                if (_isWorking)
+                _isWorking = false;
+                if (_isProccessing)
                 {
                     _currentFunction?.ResetTimer();
+                    _isProccessing = false;
                 }
             }
         }
@@ -67,23 +75,34 @@ namespace Player
             Ray ray = new Ray(transform.position + Vector3.up /2, transform.forward);
             if (Physics.Raycast(ray, out RaycastHit hit, 1))
             {
+                if (hit.collider.TryGetComponent<IPutItemFull>(out IPutItemFull itemPutBox))
+                {
+                    if(_canTake){
+                        bool status = itemPutBox.PutItem(_inventory.GetItem());
+                        if (status == true)
+                        {
+                            _inventory.PutItem();
+                            _inventory.ClearHand();
+                        }
+                    }
+                }
+                
                 //if raycast hit something has ItemBox class
                 if (hit.collider.TryGetComponent<ItemBox>(out ItemBox itemBox))
                 {
                     //Get the item held by the ItemBox
                     _inventory.TakeItem(itemBox.GetItem());
+                    StartCoroutine(CanTakeController());
                 }
                 
-                if (hit.collider.TryGetComponent<IPutItemFull>(out IPutItemFull itemPutBox))
-                {
-                    bool status = itemPutBox.PutItem(_inventory.GetItem());
-                    if (status == true)
-                    {
-                        _inventory.PutItem();
-                        _inventory.ClearHand();
-                    }
-                }
             }
+        }
+
+        private IEnumerator CanTakeController()
+        {
+            _canTake = false;
+            yield return _takeCoolDown;
+            _canTake = true;
         }
 
         private IEnumerator Particle()
@@ -102,18 +121,15 @@ namespace Player
                 //if raycast hit something has Functionality class
                 if (hit.collider.TryGetComponent<Functionality>(out Functionality itemProcess))
                 {
-                    _isWorking = true;
+                    _isProccessing = true;
                     _currentFunction = itemProcess;
-                }
-                else
-                {
-                    _isWorking = false;
                 }
             }
         }
 
         private void DoProcessAction()
         {
+            if (!_isProccessing) return;
             if (!_isWorking) return;
             ItemType item = _currentFunction.Process();
             cuttingAnimBool();

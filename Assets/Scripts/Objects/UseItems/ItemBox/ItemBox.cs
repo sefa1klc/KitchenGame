@@ -18,5 +18,10 @@ namespace Objects.UseItems.ItemBox
             _item = type;
         }
 
+        public ItemType GetCurrentType()
+        {
+            return _item;
+        }
+
     }
 }

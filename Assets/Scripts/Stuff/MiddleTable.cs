@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Interface;
 using Objects;
@@ -8,47 +9,84 @@ using UnityEngine;
 
 namespace Stuff
 {
-    public class MiddleTable : MonoBehaviour, IPutItemFull
+    public class MiddleTable : ItemBox, IPutItemFull
     {
         //List of Enum
         [SerializeField] private List<ObjectnType> _itemsToHold = new List<ObjectnType>();
-        [SerializeField] private TableBox _tableBox;
-        private ItemType _currentItem;
+        [SerializeField] private bool _isfull = false;
+        [SerializeField] private Plate _plate;
 
         private void Start()
         {
-            _currentItem = ItemType.NONE;
+            SetType(ItemType.NONE);
+        }
+        
+        public override ItemType GetItem()
+        {
+            if (GetCurrentType() == ItemType._Plate) return ItemType.NONE;
+            if (_isfull)
+            {
+                _isfull = false;
+                CloseItem();
+                StartCoroutine(ChangeType());
+                return base.GetItem();
+            }
+
+            return ItemType.NONE;
         }
 
         public bool PutItem(ItemType item)
         {
-            if (_tableBox.canTake) return false;
-            if (_currentItem != ItemType.NONE) return false;
-            _currentItem = item;
-            _tableBox.canTake = true;
-            
-            _tableBox.SetType(_currentItem);
-            
-            //we decide to which one may appear
-            foreach (ObjectnType itemHold in _itemsToHold)
+            if (!_isfull)
             {
-                if (itemHold._type != item)
+                SetType(item);
+            
+                //we decide to which one may appear
+                foreach (ObjectnType itemHold in _itemsToHold)
                 {
-                    itemHold._item.SetActive(false);
+                    if (itemHold._type != GetCurrentType())
+                    {
+                        itemHold._item.SetActive(false);
+                    }
+                    else
+                    {
+                        itemHold._item.SetActive(true);
+                    }
                 }
-                else
+
+                StartCoroutine(PutCoolDown());
+                return true;
+            }
+            else
+            {
+                if (GetCurrentType() == ItemType._Plate)
                 {
-                    itemHold._item.SetActive(true);
+                    if (item != ItemType._Plate)
+                    {
+                        StartCoroutine(PutCoolDown());
+                        return _plate.PutItem(item);
+                    }
                 }
             }
 
-            return true;
+            return false;
+        }
+
+        private IEnumerator PutCoolDown()
+        {
+            yield return new WaitForEndOfFrame();
+            _isfull = true;
+        }
+        
+        private IEnumerator ChangeType()
+        {
+            yield return new WaitForEndOfFrame();
+            SetType(ItemType.NONE);
         }
 
         public void CloseItem()
         {
            _itemsToHold.ForEach(item => item._item.SetActive(false));
-           _currentItem = ItemType.NONE;
         }
     }
 }
