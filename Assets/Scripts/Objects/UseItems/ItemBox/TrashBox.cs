@@ -1,4 +1,5 @@
 ﻿using Interface;
+using Sounds;
 using UnityEngine;
 
 namespace Objects.UseItems.ItemBox
@@ -7,6 +8,7 @@ namespace Objects.UseItems.ItemBox
     {
         public bool PutItem(ItemType item)
         {
+            FindObjectOfType<SoundManager>().PlayAudioClip("Trash");
             return true;
         }
     }

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using Abstract;
 using Interface;
 using Player;
+using Sounds;
 using UnityEngine;
 
 namespace Stuff
@@ -13,12 +14,18 @@ namespace Stuff
     {
         [SerializeField] private List<ObjectnType> _itemsToHold = new List<ObjectnType>();
         private ItemType _currentItem;
-        
+        public GameObject targetObject; // Başka nesnenin referansını tutacak değişken
+        private Animator targetAnimator;
+
+        private void Awake()
+        {
+            targetAnimator = targetObject.GetComponent<Animator>();
+        }
+
         private void Start()
         {
             _currentItem = ItemType.NONE;
             _Timer.gameObject.SetActive(false);
-
         }
 
         public override ItemType Process()
@@ -28,14 +35,18 @@ namespace Stuff
             if (Processtarted == true && _Timer.gameObject.activeSelf == false)
             {
                 _Timer.gameObject.SetActive(true);
+                targetAnimator.SetBool("isCutting", true);
+                FindObjectOfType<SoundManager>().PlayAudioClip("Cutting");
             }
             
             Processtarted = true;
-            
             _currentTime += Time.deltaTime;
             _Timer.UpdateClock(_currentTime, _maxTime);
             if (_currentTime >= _maxTime)
             {
+                targetAnimator.SetBool("isCutting", false);
+                FindObjectOfType<SoundManager>().StopAudioClip("Cutting");
+                FindObjectOfType<SoundManager>().PlayAudioClip("PickUp");
                 _currentTime = 0;
                 Processtarted = false;
                 _Timer.gameObject.SetActive(false);
@@ -70,6 +81,7 @@ namespace Stuff
         public bool PutItem(ItemType item)
         {
             if (!FilterItem(item)) return false;
+            FindObjectOfType<SoundManager>().PlayAudioClip("PlatePutDown");
             if (_currentItem != ItemType.NONE) return false;
             _currentItem = item;
             

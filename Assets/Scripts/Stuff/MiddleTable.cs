@@ -5,6 +5,7 @@ using Interface;
 using Objects;
 using Objects.UseItems.ItemBox;
 using Player;
+using Sounds;
 using UnityEngine;
 
 namespace Stuff
@@ -28,6 +29,7 @@ namespace Stuff
             if (GetCurrentType() == ItemType._Plate && _plate._isDone == false) {return ItemType.NONE;}
             else if (_plate._isDone)
             {
+                _plateLight.SetActive(false);
                 StartCoroutine(ChangeType());
                 _plate.ResetPlate();
                 return ItemType._Hamburger; 
@@ -45,6 +47,7 @@ namespace Stuff
         {
             if (!_isfull)
             {
+                FindObjectOfType<SoundManager>().PlayAudioClip("PlatePutDown");
                 SetType(item);
                 _plateLight.SetActive(true);
             
@@ -66,8 +69,7 @@ namespace Stuff
             }
             else
             {
-                _plateLight.SetActive(false);
-
+               
                 if (GetCurrentType() == ItemType._Plate)
                 {
                     if (item != ItemType._Plate)

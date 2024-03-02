@@ -5,7 +5,10 @@ using Customers;
 using Interface;
 using JetBrains.Annotations;
 using Objects.UseItems.ItemBox;
+using Sounds;
 using UnityEngine;
+using TMPro;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -20,6 +23,9 @@ namespace Player
         private bool _canTake = true;
         private WaitForSeconds _takeCoolDown;
         public GameObject _recipe;
+        public TextMeshProUGUI _coinText;
+        public float _moneyCounter = 0f;
+        private float increase = 100f;
 
         private void Awake()
         {
@@ -82,6 +88,8 @@ namespace Player
         //    Gizmos.color = Color.green;
         //    Gizmos.DrawLine(transform.position + Vector3.up , transform.position + Vector3.up + transform.forward );
         //}
+
+        
 
         public void DoTakeAction()
         {
@@ -171,8 +179,12 @@ namespace Player
                 {
                     CustomerManager.Instance.SellToCustomer();
                     _inventory.ClearHand();
+                    FindObjectOfType<SoundManager>().PlayAudioClip("Coins");
+                    _moneyCounter += increase;
+                    _coinText.text = _moneyCounter.ToString();
                 }
             }
         }
+        
     }
 }

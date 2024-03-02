@@ -1,5 +1,6 @@
 ﻿using System;
 using Interface;
+using Sounds;
 using UnityEngine;
 
 namespace Objects.UseItems.ItemBox
@@ -10,6 +11,8 @@ namespace Objects.UseItems.ItemBox
         
         public virtual ItemType GetItem()
         {
+            FindObjectOfType<SoundManager>().PlayAudioClip("PickUp");
+            FindObjectOfType<SoundManager>().PlayAudioClip("Particle");
             return _item;
         }
 

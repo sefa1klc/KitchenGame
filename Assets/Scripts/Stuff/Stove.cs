@@ -2,6 +2,7 @@
 using Abstract;
 using Interface;
 using Objects.UseItems.ItemBox;
+using Sounds;
 using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -56,6 +57,10 @@ namespace Stuff
             if (_isFull) return false;
             _timer.gameObject.SetActive(true);
             Fire.SetActive(true);
+            //to play the audioclip with to find SoundManager script
+            FindObjectOfType<SoundManager>().PlayAudioClip("StoveTimer");
+            FindObjectOfType<SoundManager>().PlayAudioClip("CookFrying");
+            FindObjectOfType<SoundManager>().PlayAudioClip("StoveFire");
             _isFull = true;
             return true;
         }

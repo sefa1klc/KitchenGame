@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Interface;
 using Player;
+using Sounds;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -19,14 +20,20 @@ namespace Stuff
         public bool PutItem(ItemType _type)
         {
             if (_currenoObjectstIndex > _objects.Count - 1) return false;
+            
             //if the item which trying to put the plate, we active this item
             if (_type == _objects[_currenoObjectstIndex]._type)
             {
+                //look again and change the sound
+                FindObjectOfType<SoundManager>().PlayAudioClip("PlatePutDown");
+                
                 _objects[_currenoObjectstIndex]._item.SetActive(true);
                 _currenoObjectstIndex++;
                 if (_currenoObjectstIndex > _objects.Count - 1)
                 {
                     _isDone = true;
+                    FindObjectOfType<SoundManager>().PlayAudioClip("BurgerFinished");
+
                 }
                 return true;
             }
