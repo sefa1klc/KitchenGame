@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Abstract;
+using Customers;
 using Interface;
 using JetBrains.Annotations;
 using Objects.UseItems.ItemBox;
@@ -18,6 +19,7 @@ namespace Player
         private Functionality _currentFunction;
         private bool _canTake = true;
         private WaitForSeconds _takeCoolDown;
+        public GameObject _recipe;
 
         private void Awake()
         {
@@ -27,8 +29,21 @@ namespace Player
             _takeCoolDown = new WaitForSeconds(0.5f);
         }
 
+        private void Start()
+        {
+            _recipe.SetActive(false);
+        }
+
         private void Update()
         {
+            if (Input.GetKey(KeyCode.Tab))
+            {
+                _recipe.SetActive(true);
+            }
+            else
+            {
+                _recipe.SetActive(false);
+            }
             if (Input.GetMouseButtonDown(0))
             {
                 DoAction();
@@ -145,6 +160,19 @@ namespace Player
         public bool cuttingAnimBool()
         {
             return true;
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (_inventory._currentItem != ItemType._Hamburger) return;
+            if (other.gameObject.CompareTag("Sellarea"))
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    CustomerManager.Instance.SellToCustomer();
+                    _inventory.ClearHand();
+                }
+            }
         }
     }
 }

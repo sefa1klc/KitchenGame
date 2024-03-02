@@ -19,7 +19,7 @@ namespace Player
         //so we do not need any spawn 
         [SerializeField] private List<ObjectnType> _itemsToHold = new List<ObjectnType>();
         
-        private ItemType _currentItem;
+        public ItemType _currentItem;
 
         private void Start()
         {
@@ -49,13 +49,13 @@ namespace Player
         public ItemType PutItem()
         {
             if (_currentItem == ItemType.NONE) return ItemType.NONE;
-            _itemsToHold.ForEach(obj => obj._item.SetActive(false));
             return _currentItem;
         }
 
         public void ClearHand()
         {
             _currentItem = ItemType.NONE;
+            _itemsToHold.ForEach(obj => obj._item.SetActive(false));
         }
         public ItemType GetItem()
         {

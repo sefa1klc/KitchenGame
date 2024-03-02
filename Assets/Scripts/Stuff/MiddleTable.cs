@@ -15,19 +15,25 @@ namespace Stuff
         [SerializeField] private List<ObjectnType> _itemsToHold = new List<ObjectnType>();
         [SerializeField] private bool _isfull = false;
         [SerializeField] private Plate _plate;
+        [SerializeField] private GameObject _plateLight;
 
         private void Start()
         {
             SetType(ItemType.NONE);
+            _plateLight.SetActive(false);
         }
         
         public override ItemType GetItem()
         {
-            if (GetCurrentType() == ItemType._Plate) return ItemType.NONE;
-            if (_isfull)
+            if (GetCurrentType() == ItemType._Plate && _plate._isDone == false) {return ItemType.NONE;}
+            else if (_plate._isDone)
             {
-                _isfull = false;
-                CloseItem();
+                StartCoroutine(ChangeType());
+                _plate.ResetPlate();
+                return ItemType._Hamburger; 
+                
+            } else if (_isfull)
+            {
                 StartCoroutine(ChangeType());
                 return base.GetItem();
             }
@@ -40,6 +46,7 @@ namespace Stuff
             if (!_isfull)
             {
                 SetType(item);
+                _plateLight.SetActive(true);
             
                 //we decide to which one may appear
                 foreach (ObjectnType itemHold in _itemsToHold)
@@ -59,6 +66,8 @@ namespace Stuff
             }
             else
             {
+                _plateLight.SetActive(false);
+
                 if (GetCurrentType() == ItemType._Plate)
                 {
                     if (item != ItemType._Plate)
@@ -80,13 +89,16 @@ namespace Stuff
         
         private IEnumerator ChangeType()
         {
+            CloseItem();
             yield return new WaitForEndOfFrame();
             SetType(ItemType.NONE);
+            _isfull = false;
         }
 
         public void CloseItem()
         {
            _itemsToHold.ForEach(item => item._item.SetActive(false));
         }
+        
     }
 }
